@@ -183,16 +183,85 @@ document.addEventListener('alpine:init', () => {
   // Add country select data
   Alpine.data('countrySelect', () => ({
     countries: [],
+    isLoading: false,
     init() {
-      fetch('https://restcountries.com/v3.1/all?fields=cca2,name')
-        .then(response => response.json())
+      // Get the country select element
+      const countrySelect = document.getElementById('country-select');
+      
+      // Wait for the select to be initialized
+      const checkSelect = setInterval(() => {
+        const countrySelectInstance = window.HSSelect.getInstance(countrySelect);
+        
+        if (countrySelectInstance && countrySelectInstance.el) {
+          clearInterval(checkSelect);
+          // Fetch countries from countriesnow API
+          this.fetchCountries(countrySelectInstance);
+          
+          // Listen for changes on the country select
+          countrySelect.addEventListener('change', (e) => {
+            countrySelectInstance.setValue(e.target.value);
+          });
+        }
+      }, 100);
+    },
+    fetchCountries(countrySelectInstance) {
+      if (!countrySelectInstance || !countrySelectInstance.el) return;
+      
+      this.isLoading = true;
+      
+      // Clear existing countries first
+      countrySelectInstance.setValue('');
+      
+      // Get all current options and remove them
+      const currentOptions = Array.from(countrySelectInstance.el.querySelectorAll('option'))
+        .filter(opt => opt.value !== '') // Keep the placeholder
+        .map(opt => opt.value);
+      
+      if (currentOptions.length > 0) {
+        countrySelectInstance.removeOption(currentOptions);
+      }
+
+      fetch('https://countriesnow.space/api/v0.1/countries', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+        .then(response => {
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+          return response.json();
+        })
         .then(data => {
-          this.countries = data
-            .map(country => ({
-              title: country.name.common,
-              val: country.cca2
-            }))
-            .sort((a, b) => a.title.localeCompare(b.title));
+          if (data.error) {
+            throw new Error(data.msg || 'Failed to fetch countries');
+          }
+          
+          if (!data.data || !Array.isArray(data.data)) {
+            throw new Error('Invalid data format received from API');
+          }
+          
+          // Process countries to remove duplicates and clean up formatting
+          const processedCountries = data.data
+            .map(country => country.country)
+            .filter((country, index, self) => self.indexOf(country) === index) // Remove duplicates
+            .sort((a, b) => a.localeCompare(b)); // Sort alphabetically
+
+          // Convert to the required format for addOptions
+          const countryOptions = processedCountries.map(country => ({
+            title: country,
+            val: country
+          }));
+
+          // Add the new countries
+          countrySelectInstance.addOption(countryOptions);
+          
+          this.isLoading = false;
+        })
+        .catch(error => {
+          console.error('Error in fetchCountries:', error);
+          this.isLoading = false;
         });
     }
   }));

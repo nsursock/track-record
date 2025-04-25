@@ -253,12 +253,22 @@ title: Sign Up
                         "searchPlaceholder": "Search countries...",
                         "searchClasses": "input input-bordered w-full focus:input-primary"
                       }'
+                      :class="{ 'opacity-50 cursor-not-allowed': isLoading }"
                       class="hidden">
                       <option value="">Select Country</option>
-                      <template x-for="country in countries" :key="country.val">
-                        <option :value="country.val" x-text="country.title"></option>
+                      <template x-if="isLoading">
+                        <option disabled>Loading countries...</option>
                       </template>
+                      <template x-if="error">
+                        <option disabled class="text-error">Error loading countries</option>
+                      </template>
+                      {# <template x-for="country in countries" :key="country.val">
+                        <option :value="country.val" x-text="country.title"></option>
+                      </template> #}
                     </select>
+                    <div x-show="error" class="mt-2 text-sm text-error">
+                      <span x-text="error"></span>
+                    </div>
                   </div>
 
                   <div class="form-control" x-data="citySelect">
@@ -284,9 +294,9 @@ title: Sign Up
                       <template x-if="isLoading">
                         <option disabled>Loading cities...</option>
                       </template>
-                      <template x-for="city in cities" :key="city.val">
+                      {# <template x-for="city in cities" :key="city.val">
                         <option :value="city.val" x-text="city.title"></option>
-                      </template>
+                      </template> #}
                     </select>
                     <div x-show="!hasCountryBeenSelected" class="mt-2 text-sm text-base-content/70">
                       Please select a country first
