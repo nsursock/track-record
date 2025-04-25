@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="{{ meta.lang or site.lang }}">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{{ site.title }} - {{ title or meta.title }}</title>
+    {% include "meta.njk" %}
+    <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="{{ '/node_modules/flatpickr/dist/flatpickr.min.css' | url }}" />
+    <link rel="stylesheet" href="{{ '/assets/css/index.css' | url }}" />
+  </head>
+
+  <body>
+
+    {% include "header.njk" %}
+
+    <main id="main" class="px-4 sm:px-6 md:px-8">
+      
+        {{ content | safe }}
+
+    </main>
+
+    {% include "footer.njk" %}
+
+    <script type="module">
+      import _ from 'lodash';
+      import Dropzone from 'dropzone';
+      import flatpickr from 'flatpickr';
+      window._ = _;
+      window.Dropzone = Dropzone;
+      window.flatpickr = flatpickr;
+    </script>
+    <script type="module" src="{{ '/assets/js/index.js' | url }}"></script>
+  </body>
+</html>

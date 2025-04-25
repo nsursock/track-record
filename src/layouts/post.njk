@@ -1,0 +1,257 @@
+---
+layout: base
+---
+
+<article class="max-w-7xl mx-auto prose prose-lg prose-slate" x-data="readingProgress">
+    <!-- Hero Section -->
+    <div class="mb-12 not-prose pt-24">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+            <!-- Left Column: Details -->
+            <div>
+                <h1 class="text-primary text-5xl font-bold mb-4">{{ title }}</h1>
+                <p class="text-secondary text-xl mb-6">{{ description }}</p>
+                <div class="text-base-content flex items-center space-x-4">
+                    <div class="flex items-center">
+                        <span class="icon-[tabler--calendar] size-5 mr-2"></span>
+                        <time datetime="{{ date | date('YYYY-MM-DD') }}">{{ date | date('MMMM D, YYYY') }}</time>
+                    </div>
+                    <div class="flex items-center">
+                        <span class="icon-[tabler--clock] size-5 mr-2"></span>
+                        <span>{{ content | readingTime }} min read</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column: Hero Image -->
+            {% if hero_image %}
+                <div class="relative h-[400px] w-full rounded-2xl overflow-hidden">
+                    {% image "src/assets/images/posts/" + hero_image + ".png", title, "(min-width: 1200px) 1400px, 100vw" %}
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <!-- Main Content Column -->
+        <div class="lg:col-span-2">
+            <div x-data="postImages" class="prose prose-lg max-w-none prose-headings:text-primary prose-h2:text-3xl prose-h3:text-2xl prose-h4:text-xl prose-p:text-secondary prose-a:text-blue-600 hover:prose-a:text-blue-800 prose-blockquote:border-l-4 prose-blockquote:border-gray-300 prose-blockquote:pl-4 prose-blockquote:italic">
+                {{ content | safe }}
+            </div>
+        </div>
+
+        <!-- Metadata Column -->
+        <div class="lg:col-span-1 not-prose">
+            <div class="sticky top-8">
+                <div class="card bg-base-200 shadow-lg">
+                    <div class="card-body space-y-6">
+                        <!-- Author Info -->
+                        <div class="flex items-center space-x-4">
+                            <div class="avatar">
+                                <div class="w-12 h-12 rounded-full">
+                                    {% image "src/assets/images/avatars/" + (author.avatar | default('avatar1.jpg')) + ".jpg", author.name | default('Author'), "100px" %}
+                                </div>
+                            </div>
+                            <div>
+                                <p class="font-semibold text-primary">{{ author.name | default('Author') }}</p>
+                                <p class="text-sm text-secondary">{{ author.role | default('Writer') }}</p>
+                            </div>
+                        </div>
+
+                        <!-- Reading Progress -->
+                        <div class="space-y-2">
+                            <h3 class="text-sm font-semibold text-primary">Reading Progress</h3>
+                            <div class="flex justify-center">
+                                <div class="radial-progress bg-primary/10 text-primary border-4 border-transparent" :style="`--value:${progress}; --size:8rem; --thickness: 1rem;`" role="progressbar" aria-label="Reading Progress">
+                                    <div class="text-center">
+                                        <div class="text-2xl font-bold" x-text="`${progress}%`"></div>
+                                        <div class="text-xs text-secondary">Complete</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Tags -->
+                        {% if tags %}
+                            <div class="space-y-2">
+                                <h3 class="text-sm font-semibold text-primary">Tags</h3>
+                                <div class="flex flex-wrap gap-2">
+                                    {% for tag in tags %}
+                                        <span class="badge badge-outline badge-secondary">
+                                            {{ tag }}
+                                        </span>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        {% endif %}
+
+                        <!-- Share Buttons -->
+                        <div class="space-y-2">
+                            <h3 class="text-sm font-semibold text-primary">Share</h3>
+                            <div class="flex space-x-4">
+                                <a href="https://twitter.com/intent/tweet?text={{ title | urlencode }}&url={{ page.url | absoluteUrl | urlencode }}" class="text-secondary hover:text-primary transition-colors">
+                                    <span class="icon-[tabler--brand-twitter] size-5"></span>
+                                </a>
+                                <a href="https://www.linkedin.com/shareArticle?mini=true&url={{ page.url | absoluteUrl | urlencode }}&title={{ title | urlencode }}" class="text-secondary hover:text-primary transition-colors">
+                                    <span class="icon-[tabler--brand-linkedin] size-5"></span>
+                                </a>
+                                <a href="https://www.facebook.com/sharer/sharer.php?u={{ page.url | absoluteUrl | urlencode }}" class="text-secondary hover:text-primary transition-colors">
+                                    <span class="icon-[tabler--brand-facebook] size-5"></span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Subscription Section -->
+    <div class="my-16 not-prose">
+        <div class="card bg-gradient-to-r from-primary/10 to-secondary/10 shadow-xl">
+            <div class="card-body">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+                    <div class="space-y-4">
+                        <h2 class="text-3xl font-bold text-primary">Join the Newsletter</h2>
+                        <p class="text-secondary text-lg">Get the latest posts and insights delivered straight to your inbox. No spam, ever.</p>
+                        <div class="flex items-center space-x-2 text-secondary">
+                            <span class="icon-[tabler--check] size-5 text-primary"></span>
+                            <span>Weekly updates</span>
+                        </div>
+                        <div class="flex items-center space-x-2 text-secondary">
+                            <span class="icon-[tabler--check] size-5 text-primary"></span>
+                            <span>Exclusive content</span>
+                        </div>
+                    </div>
+                    <div class="card bg-base-100 shadow-lg">
+                        <div class="card-body">
+                            <form class="space-y-4">
+                                <div class="form-control">
+                                    <label class="label">
+                                        <span class="label-text text-secondary">Email Address</span>
+                                    </label>
+                                    <div class="relative">
+                                        <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-secondary">
+                                            <span class="icon-[tabler--mail] size-5"></span>
+                                        </span>
+                                        <input type="email" placeholder="you@example.com" class="input input-bordered w-full pl-10 bg-base-100"/>
+                                    </div>
+                                </div>
+                                <button type="submit" class="btn btn-primary w-full gap-2">
+                                    <span class="icon-[tabler--send] size-5"></span>
+                                    Subscribe Now
+                                </button>
+                                <p class="text-xs text-secondary text-center">We respect your privacy. Unsubscribe at any time.</p>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Comments Section -->
+    <div class="my-16 not-prose">
+        <div class="card bg-base-200 shadow-lg">
+            <div class="card-body">
+                <div class="flex items-center gap-2 mb-8">
+                    <span class="icon-[tabler--message-circle-2] size-6 text-primary"></span>
+                    <h2 class="text-2xl font-bold text-primary">Join the Discussion</h2>
+                </div>
+                
+                <!-- Comment Form -->
+                <div class="card bg-base-100 shadow-md mb-8">
+                    <div class="card-body">
+                        <form class="space-y-4">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div class="form-control">
+                                    <label class="label">
+                                        <span class="label-text text-secondary">Name</span>
+                                    </label>
+                                    <div class="relative">
+                                        <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-secondary">
+                                            <span class="icon-[tabler--user] size-5"></span>
+                                        </span>
+                                        <input type="text" placeholder="Your name" class="input input-bordered w-full pl-10"/>
+                                    </div>
+                                </div>
+                                <div class="form-control">
+                                    <label class="label">
+                                        <span class="label-text text-secondary">Email</span>
+                                    </label>
+                                    <div class="relative">
+                                        <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-secondary">
+                                            <span class="icon-[tabler--mail] size-5"></span>
+                                        </span>
+                                        <input type="email" placeholder="Your email" class="input input-bordered w-full pl-10"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-control">
+                                <label class="label">
+                                    <span class="label-text text-secondary">Comment</span>
+                                </label>
+                                <textarea class="textarea textarea-bordered h-32" placeholder="Share your thoughts..."></textarea>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <p class="text-sm text-secondary">Your email will not be published.</p>
+                                <button type="submit" class="btn btn-primary gap-2">
+                                    <span class="icon-[tabler--send] size-5"></span>
+                                    Post Comment
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Comments List -->
+                <div class="space-y-6">
+                    <!-- Sample Comment -->
+                    <div class="card bg-base-100 shadow-md">
+                        <div class="card-body">
+                            <div class="flex items-start gap-4">
+                                <div class="avatar">
+                                    <div class="w-12 h-12 rounded-full">
+                                        {% image "src/assets/images/avatars/avatar1.jpg", "User", "100px", "w-full h-full object-cover" %}
+                                    </div>
+                                </div>
+                                <div class="flex-1">
+                                    <div class="flex items-center justify-between mb-2">
+                                        <div>
+                                            <p class="font-semibold text-primary">John Doe</p>
+                                            <p class="text-sm text-secondary">2 days ago</p>
+                                        </div>
+                                        <button class="btn btn-ghost btn-sm gap-1">
+                                            <span class="icon-[tabler--heart] size-4"></span>
+                                            <span class="text-sm">12</span>
+                                        </button>
+                                    </div>
+                                    <p class="text-secondary mb-4">This is a great article! Thanks for sharing your insights. I particularly enjoyed the section about the future of technology.</p>
+                                    <div class="flex items-center gap-4 text-sm">
+                                        <button class="text-secondary hover:text-primary transition-colors flex items-center gap-1">
+                                            <span class="icon-[tabler--message-circle-2] size-4"></span>
+                                            Reply
+                                        </button>
+                                        <button class="text-secondary hover:text-primary transition-colors flex items-center gap-1">
+                                            <span class="icon-[tabler--share] size-4"></span>
+                                            Share
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile Progress Bar -->
+    <div class="lg:hidden fixed bottom-0 left-0 right-0 bg-base-100 shadow-lg px-4 py-1">
+        <div class="flex items-center gap-x-1">
+            <template x-for="(step, index) in sectionCount">
+                <div class="progress-step bg-primary" role="progressbar" aria-label="Progressbar" :aria-valuenow="progress" aria-valuemin="0" aria-valuemax="100" style="opacity: 0.3;"></div>
+            </template>
+            <p class="text-xs text-primary ms-1 font-medium" x-text="`${progress}%`"></p>
+        </div>
+    </div>
+</article>

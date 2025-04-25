@@ -1,0 +1,136 @@
+---
+meta:
+  title: Track Record
+  description: Discover the wisdom of 20,000+ songs through expert analysis, reviews, and insights.
+layout: base
+eleventyNavigation:
+  key: Home
+  order: 1
+---
+
+<section class="">
+  <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-16">
+    <div class="max-w-7xl mx-auto">
+      <div class="flex flex-col lg:flex-row gap-12 items-center">
+        <!-- Left Section - Blog Details -->
+        <div class="w-full lg:w-1/2">
+          <div class="mb-4">
+            <span class="badge badge-soft badge-secondary badge-lg font-bold">
+              Wisdom from 20,000+ Songs
+            </span>
+          </div>
+          <h1 class="text-base-content text-6xl font-bold mb-6 leading-tight">
+            Track Record:<br/>
+            <span class="text-transparent bg-clip-text bg-gradient-to-r from-primary to-error">
+              Musical Wisdom
+            </span>
+          </h1>
+          <p class="text-secondary text-xl mb-8 leading-relaxed">
+            Unlock the secrets of music through our extensive collection of song analyses, 
+            expert reviews, and deep insights. From timeless classics to modern hits, 
+            we decode the patterns that make music resonate.
+          </p>
+          <div class="flex flex-col sm:flex-row gap-4">
+
+            <button class="btn btn-soft btn-primary btn-xl relative overflow-hidden group">
+              <span class="absolute inset-0 bg-gradient-to-r from-primary to-error opacity-20 blur-lg group-hover:opacity-40 transition-opacity"></span>
+              <span class="icon-[tabler--music] size-6 shrink-0 relative z-10"></span>
+              <span class="relative z-10">Explore Songs</span>
+            </button>
+            <a href="/about/" class="btn btn-outline btn-secondary btn-xl relative overflow-hidden group">
+              <span class="absolute inset-0 bg-gradient-to-r from-secondary to-secondary opacity-20 blur-lg group-hover:opacity-40 transition-opacity"></span>
+              <span class="icon-[tabler--user] size-6 shrink-0 relative z-10"></span>
+              <span class="relative z-10">About Me</span>
+            </a>
+
+            {# <button class="bg-purple-600 hover:bg-purple-700 text-white px-8 py-4 rounded-full transition-colors flex items-center justify-center gap-2">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"></path>
+              </svg>
+              Explore Songs
+            </button>
+            <button class="border border-white/20 hover:bg-white/10 text-white px-8 py-4 rounded-full transition-colors flex items-center justify-center gap-2">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+              </svg>
+              Latest Insights
+            </button> #}
+          </div>
+        </div>
+
+        <!-- Right Section - Image Grid -->
+        <div class="w-full lg:w-1/2">
+          <div class="grid grid-cols-2 auto-rows-fr gap-4 p-4 h-[600px]">
+            <div class="relative group">
+              <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent rounded-3xl z-10"></div>
+              {% image "src/assets/images/heros/hero-image1.png", "Artist performing", "(min-width: 1200px) 1400px, 100vw", "w-full h-full object-cover rounded-3xl transform group-hover:scale-105 transition-transform duration-300" %}
+            </div>
+            <div class="relative group translate-y-1/2">
+              <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent rounded-3xl z-10"></div>
+              {% image "src/assets/images/heros/hero-image2.png", "Music festival", "(min-width: 1200px) 1400px, 100vw", "w-full h-full object-cover rounded-3xl transform group-hover:scale-105 transition-transform duration-300" %}
+            </div>
+            <div class="relative group">
+              <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent rounded-3xl z-10"></div>
+              {% image "src/assets/images/heros/hero-image3.png", "Recording studio", "(min-width: 1200px) 1400px, 100vw", "w-full h-full object-cover rounded-3xl transform group-hover:scale-105 transition-transform duration-300" %}
+            </div>
+            <div class="relative group translate-y-1/2">
+              <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent rounded-3xl z-10"></div>
+              {% image "src/assets/images/heros/hero-image4.png", "Live concert", "(min-width: 1200px) 1400px, 100vw", "w-full h-full object-cover rounded-3xl transform group-hover:scale-105 transition-transform duration-300" %}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Featured Posts Section -->
+<section class="py-20 bg-base-200">
+  <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="max-w-7xl mx-auto">
+      <div class="text-center mb-16">
+        <h2 class="text-4xl font-bold mb-4">Featured Posts</h2>
+        <p class="text-secondary text-xl">Discover our latest and most insightful song analyses</p>
+      </div>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        {% for post in collections.featured %}
+          <div class="card bg-base-100 shadow-xl group">
+            <figure class="relative overflow-hidden w-full">
+              <div class="w-full h-48">
+                {% image "src/assets/images/posts/" + post.data.hero_image + ".png", post.data.title, "(min-width: 1200px) 1400px, 100vw", "w-full h-full object-cover" %}
+              </div>
+            </figure>
+            <div class="card-body">
+              <div class="flex flex-col mb-4">
+                <div class="flex items-center gap-4">
+                  <div class="avatar">
+                    <div class="size-12 rounded-full">
+                      {% image "src/assets/images/avatars/" + (post.data.author.avatar | default("avatar1.jpg")) + ".jpg", post.data.author.name, "100px", "w-full h-full object-cover" %}
+                    </div>
+                  </div>
+                  <div>
+                    <h4 class="font-semibold text-primary">{{ post.data.author.name }}</h4>
+                    <p class="text-sm text-secondary">{{ post.data.author.role }}</p>
+                  </div>
+                </div>
+                <span class="badge badge-soft badge-secondary badge-lg flex items-center gap-2 mt-4">
+                  <span class="icon-[tabler--clock] size-4"></span>
+                  <span>{{ post.date | date('MMMM D, YYYY') }}</span>
+                </span>
+              </div>
+              <h3 class="card-title">{{ post.data.title }}</h3>
+              <p class="text-secondary">{{ post.data.description }}</p>
+              <div class="card-actions justify-end mt-4">
+                <a href="{{ post.url }}" class="btn btn-primary btn-soft relative overflow-hidden group">
+                  <span class="absolute inset-0 bg-gradient-to-r from-primary to-error opacity-20 blur-lg group-hover:opacity-40 transition-opacity"></span>
+                  <span class="relative z-10">Read More</span>
+                </a>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</section>

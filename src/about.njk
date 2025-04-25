@@ -1,0 +1,135 @@
+---
+layout: base
+eleventyNavigation:
+  key: About
+  order: 2
+meta:
+  title: About me
+  description: Learn more about me and my journey.
+---
+
+<div class="container mx-auto mb-5 mt-12 px-10 pb-12 pt-24">
+  <div class="grid grid-cols-1 md:grid-cols-12 gap-12">
+    <!-- Middle Column - Text -->
+    <div class="space-y-6 order-2 md:order-1 md:col-span-5">
+      <h1 class="text-4xl font-bold mb-6 text-primary">About Me</h1>
+      <p class="text-lg leading-relaxed text-secondary">
+        Welcome to my corner of the internet! I'm a passionate software engineer and designer with over a decade of experience in creating meaningful digital experiences. My journey in technology began during my university years, where I discovered my love for solving complex problems through elegant code and intuitive design.
+      </p>
+      <p class="text-lg leading-relaxed text-secondary">
+        Throughout my career, I've had the privilege of working with diverse teams and clients across various industries, from startups to Fortune 500 companies. This exposure has given me a unique perspective on how technology can transform businesses and improve people's lives. I specialize in full-stack development, with a particular focus on modern web technologies and cloud architecture.
+      </p>
+      <p class="text-lg leading-relaxed text-secondary">
+        What sets me apart is my ability to bridge the gap between technical implementation and user experience. I believe that great software isn't just about writing clean code—it's about understanding the human element behind every interaction. This philosophy has guided me in creating solutions that are not only technically robust but also delightful to use.
+      </p>
+      <p class="text-lg leading-relaxed text-secondary">
+        When I'm not immersed in code, you can find me exploring the latest developments in artificial intelligence, contributing to open-source projects, or mentoring aspiring developers. I'm also an avid photographer and outdoor enthusiast, which helps me maintain a fresh perspective on both my work and life.
+      </p>
+      <p class="text-lg leading-relaxed text-secondary">
+        I'm constantly learning and pushing boundaries to create innovative solutions. Whether it's adopting new technologies, refining my design skills, or exploring different programming paradigms, I'm always looking for ways to grow and improve. My goal is to create software that makes a positive impact on people's lives while maintaining the highest standards of quality and performance.
+      </p>
+    </div>
+
+    <!-- Left Column - Image and Contact -->
+    <div class="space-y-8 order-1 md:order-2 md:col-span-4">
+      <div class="relative">
+        <div class="transform rotate-3 hover:rotate-0 transition-transform duration-300">
+          <img 
+            src="/assets/images/profile.jpg" 
+            alt="Profile picture" 
+            class="rounded-lg shadow-xl w-full max-w-md"
+          >
+        </div>
+      </div>
+
+      <!-- Contact Section -->
+      <div class="space-y-6">
+        <h3 class="text-lg font-semibold text-secondary">Follow me on</h3>
+        <div class="flex flex-col space-y-4">
+          <a href="https://twitter.com/yourusername" target="_blank" class="link link-secondary hover:link-primary transition-colors flex items-center gap-2">
+            <i class="icon-[tabler--brand-x] text-2xl text-primary hover:text-primary-focus"></i>
+            <span>Twitter</span>
+          </a>
+          <a href="https://github.com/yourusername" target="_blank" class="link link-secondary hover:link-primary transition-colors flex items-center gap-2">
+            <i class="icon-[tabler--brand-github] text-2xl text-primary hover:text-primary-focus"></i>
+            <span>GitHub</span>
+          </a>
+          <a href="https://linkedin.com/in/yourusername" target="_blank" class="link link-secondary hover:link-primary transition-colors flex items-center gap-2">
+            <i class="icon-[tabler--brand-linkedin] text-2xl text-primary hover:text-primary-focus"></i>
+            <span>LinkedIn</span>
+          </a>
+        </div>
+
+        <!-- Separator -->
+        <div class="border-t border-secondary/20 max-w-md"></div>
+
+        <!-- Email -->
+        <div>
+          <a href="mailto:your.email@example.com" class="link link-secondary hover:link-primary transition-colors flex items-center gap-2">
+            <i class="icon-[tabler--mail] text-xl text-primary hover:text-primary-focus"></i>
+            your.email@example.com
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Column - Timeline -->
+    <div class="space-y-6 order-3 md:order-3 md:col-span-3">
+      <h2 class="text-2xl font-bold mb-6 text-primary">Career Timeline</h2>
+      <ul class="timeline timeline-snap-icon timeline-vertical timeline-compact">
+        <li>
+          <div class="timeline-middle">
+            <span class="bg-primary/20 flex size-4.5 items-center justify-center rounded-full">
+              <span class="badge badge-primary size-3 rounded-full p-0"></span>
+            </span>
+          </div>
+          <div class="timeline-end ms-2 w-full rounded-lg">
+            <div class="text-base-content pt-0.5 mb-3 font-medium">Started Software Engineering Journey</div>
+            <p class="mb-2">Began my career in software development, focusing on web technologies and user experience design.</p>
+            <div class="text-base-content/50 text-sm">2010</div>
+          </div>
+          <hr />
+        </li>
+        <li>
+          <div class="timeline-middle">
+            <span class="bg-primary/20 flex size-4.5 items-center justify-center rounded-full">
+              <span class="badge badge-primary size-3 rounded-full p-0"></span>
+            </span>
+          </div>
+          <div class="timeline-end ms-2 w-full rounded-lg">
+            <div class="text-base-content pt-0.5 mb-3 font-medium">Full-Stack Development Focus</div>
+            <p class="mb-2">Expanded expertise to include both frontend and backend development, working with modern frameworks and cloud technologies.</p>
+            <div class="text-base-content/50 text-sm">2015</div>
+          </div>
+          <hr />
+        </li>
+        <li>
+          <div class="timeline-middle">
+            <span class="bg-primary/20 flex size-4.5 items-center justify-center rounded-full">
+              <span class="badge badge-primary size-3 rounded-full p-0"></span>
+            </span>
+          </div>
+          <div class="timeline-end ms-2 w-full rounded-lg">
+            <div class="text-base-content pt-0.5 mb-3 font-medium">Open Source Contributions</div>
+            <p class="mb-2">Started actively contributing to open-source projects and mentoring aspiring developers.</p>
+            <div class="text-base-content/50 text-sm">2018</div>
+          </div>
+          <hr />
+        </li>
+        <li>
+          <div class="timeline-middle">
+            <span class="bg-primary/20 flex size-4.5 items-center justify-center rounded-full">
+              <span class="badge badge-primary size-3 rounded-full p-0"></span>
+            </span>
+          </div>
+          <div class="timeline-end ms-2 w-full rounded-lg">
+            <div class="text-base-content pt-0.5 mb-3 font-medium">AI & Emerging Technologies</div>
+            <p class="mb-2">Exploring artificial intelligence and its applications in software development.</p>
+            <div class="text-base-content/50 text-sm">2023</div>
+          </div>
+          <hr />
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>

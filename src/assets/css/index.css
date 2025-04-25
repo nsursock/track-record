@@ -1,0 +1,64 @@
+@import 'tailwindcss';
+@import "flyonui/variants.css";
+@import "flyonui/src/vendor/flatpickr.css";
+
+@plugin "@tailwindcss/typography";
+
+@plugin "flyonui" {
+  themes: all;
+}
+
+@plugin "@iconify/tailwind4";
+
+/* If you gitignored node_modules use below method */
+@source "./node_modules/flyonui/dist/index.js";
+@source "./node_modules/flyonui/dist/accordion.js";
+@source "./node_modules/flyonui/dist/select.js";
+
+:root {
+  --theme-cyberpunk: true;
+}
+
+@plugin "flyonui/theme" {
+  name: "cyberpunk";
+  default: true;
+  prefersdark: false;
+  color-scheme: dark;
+  fontFamily: "Chakra Petch, system-ui, sans-serif";
+
+  --color-base-100: #1a103d;
+  --color-base-200: #221551;
+  --color-base-300: #2a1b64;
+  --color-base-content: #f9f7fd;
+  --color-primary: #ff00ff;
+  --color-primary-content: #ffffff;
+  --color-secondary: #00ffff;
+  --color-accent: #ff00ff;
+  --color-accent-content: #ffffff;
+  --color-neutral: #221551;
+  --color-neutral-content: #f9f7fd;
+  --color-info: #53c0f3;
+  --color-info-content: #201047;
+  --color-success: #71ead2;
+  --color-success-content: #201047;
+  --color-warning: #eace6c;
+  --color-warning-content: #201047;
+  --color-error: #ec8c78;
+  --color-error-content: #201047;
+
+  /* Border Radius */
+  --radius-selector: 0.5rem;
+  --radius-field: 0.25rem;
+  --radius-box: 0.5rem;
+
+  /* Base Sizes */
+  --size-selector: 0.25rem;
+  --size-field: 0.25rem;
+
+  /* Border Size */
+  --border: 1px;
+
+  /* Effects */
+  --depth: 1;
+  --noise: 0;
+}
