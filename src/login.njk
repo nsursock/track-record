@@ -1,0 +1,127 @@
+---
+layout: base.njk
+title: Login
+---
+
+<div class="min-h-screen flex items-center justify-center bg-base-100 py-12 px-4 sm:px-6 lg:px-8" x-data="loginForm" x-init="init">
+  <div class="w-full max-w-md">
+    <div class="bg-base-200 rounded-xl shadow-xl overflow-hidden">
+      <div class="p-8">
+        <div class="text-center mb-8">
+          <h2 class="text-2xl font-bold text-primary">Welcome Back</h2>
+          <p class="text-base-content/70 mt-2">Sign in to your account</p>
+        </div>
+
+        <form id="login-form" class="space-y-6" @submit.prevent="submitForm">
+          <div class="space-y-4">
+            <div class="form-control">
+              <label for="email" class="label">
+                <span class="label-text">Email address</span>
+              </label>
+              <input type="email" id="email" x-model="formData.email" required 
+                class="input input-bordered w-full focus:input-primary" 
+                placeholder="Enter your email">
+            </div>
+            <div class="form-control">
+              <label for="password" class="label">
+                <span class="label-text">Password</span>
+              </label>
+              <div class="input">
+                <input type="password" id="password" x-model="formData.password" required 
+                  class="w-full focus:input-primary" 
+                  placeholder="Enter your password">
+                <button type="button" data-toggle-password='{ "target": "#password" }' class="block cursor-pointer" aria-label="password toggle">
+                  <span class="icon-[tabler--eye] text-base-content/80 password-active:block hidden size-5 shrink-0"></span>
+                  <span class="icon-[tabler--eye-off] text-base-content/80 password-active:hidden block size-5 shrink-0"></span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="flex items-center justify-between">
+            <div class="flex items-center">
+              <input id="remember-me" name="remember-me" type="checkbox" 
+                class="checkbox checkbox-primary" x-model="formData.rememberMe">
+              <label for="remember-me" class="ml-2 block text-sm text-base-content">
+                Remember me
+              </label>
+            </div>
+
+            <div class="text-sm">
+              <a href="/forgot-password" class="link link-primary">
+                Forgot your password?
+              </a>
+            </div>
+          </div>
+
+          <div>
+            <button type="submit" class="btn btn-primary w-full" :disabled="isLoading">
+              <span x-show="!isLoading">Sign in</span>
+              <span x-show="isLoading" class="loading loading-spinner"></span>
+            </button>
+          </div>
+
+          <div class="text-center">
+            <p class="text-sm text-base-content">
+              Don't have an account? 
+              <a href="/signup/" class="link link-primary">Sign up</a>
+            </p>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+document.addEventListener('alpine:init', () => {
+  Alpine.data('loginForm', () => ({
+    formData: {
+      email: '',
+      password: '',
+      rememberMe: false
+    },
+    isLoading: false,
+    error: null,
+
+    init() {
+      // Initialize any necessary setup
+    },
+
+    async submitForm() {
+      this.isLoading = true;
+      this.error = null;
+
+      try {
+        const response = await fetch('/api/login', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(this.formData)
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.error || 'Login failed');
+        }
+
+        // Store the session token if provided
+        if (data.session) {
+          localStorage.setItem('session', JSON.stringify(data.session));
+        }
+
+        // Redirect to profile page
+        window.location.href = '/profile/';
+      } catch (error) {
+        this.error = error.message;
+        // Show error message to user
+        alert(this.error);
+      } finally {
+        this.isLoading = false;
+      }
+    }
+  }));
+});
+</script> 

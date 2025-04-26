@@ -6,9 +6,8 @@ export default defineConfig({
     emptyOutDir: true,
     rollupOptions: {
       external: [
-        'lodash',
-        'dropzone',
-        'flatpickr'
+        'alpinejs',
+        'flatpickr',
       ]
     }
   },
@@ -22,6 +21,6 @@ export default defineConfig({
     devSourcemap: true
   },
   optimizeDeps: {
-    include: ['lodash', 'dropzone', 'flatpickr']
+    include: ['flatpickr']
   }
 }); 

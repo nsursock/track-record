@@ -23,12 +23,9 @@
     {% include "footer.njk" %}
 
     <script type="module">
-      import _ from 'lodash';
-      import Dropzone from 'dropzone';
+      import Alpine from 'alpinejs';
       import flatpickr from 'flatpickr';
-      window._ = _;
-      window.Dropzone = Dropzone;
-      window.flatpickr = flatpickr;
+      import 'flatpickr/dist/flatpickr.css';
     </script>
     <script type="module" src="{{ '/assets/js/index.js' | url }}"></script>
   </body>

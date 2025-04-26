@@ -148,10 +148,16 @@ title: Sign Up
                     <span class="label-text">Password</span>
                   </label>
                   <div class="relative">
-                    <input type="password" id="password" x-model="formData.password" required 
-                      @input="checkPasswordStrength($event.target.value)"
-                      class="input input-bordered w-full focus:input-primary" 
-                      placeholder="Create a password">
+                    <div class="input">
+                      <input type="password" id="password" x-model="formData.password" required 
+                        @input="checkPasswordStrength($event.target.value)"
+                        class="w-full focus:input-primary" 
+                        placeholder="Create a password">
+                      <button type="button" data-toggle-password='{ "target": "#password" }' class="block cursor-pointer" aria-label="password toggle">
+                        <span class="icon-[tabler--eye] text-base-content/80 password-active:block hidden size-5 shrink-0"></span>
+                        <span class="icon-[tabler--eye-off] text-base-content/80 password-active:hidden block size-5 shrink-0"></span>
+                      </button>
+                    </div>
                     <!-- Password Strength Indicator -->
                     <div class="mt-2">
                       <div class="flex gap-0.5 h-1.5">
@@ -160,16 +166,14 @@ title: Sign Up
                             :class="{
                               'bg-primary': i <= passwordStrength,
                               'bg-neutral/20': i > passwordStrength
-                            }">
-                          </div>
+                            }"></div>
                         </template>
                       </div>
                       <div class="mt-2">
                         <div class="flex items-center gap-2">
                           <span class="text-sm text-base-content">Level:</span>
                           <span class="text-base-content text-sm font-semibold"
-                            x-text="['Empty', 'Very Weak', 'Weak', 'Medium', 'Strong', 'Very Strong'][passwordStrength]">
-                          </span>
+                            x-text="['Empty', 'Very Weak', 'Weak', 'Medium', 'Strong', 'Very Strong'][passwordStrength]"></span>
                         </div>
                         <h6 class="my-2 text-base font-semibold text-base-content">Your password must contain:</h6>
                         <ul class="text-base-content/80 space-y-1 text-sm">
@@ -207,9 +211,15 @@ title: Sign Up
                   <label for="confirm-password" class="label">
                     <span class="label-text">Confirm Password</span>
                   </label>
-                  <input type="password" id="confirm-password" x-model="formData.confirmPassword" required 
-                    class="input input-bordered w-full focus:input-primary" 
-                    placeholder="Confirm your password">
+                  <div class="input">
+                    <input type="password" id="confirm-password" x-model="formData.confirmPassword" required 
+                      class="w-full focus:input-primary" 
+                      placeholder="Confirm your password">
+                    <button type="button" data-toggle-password='{ "target": "#confirm-password" }' class="block cursor-pointer" aria-label="password toggle">
+                      <span class="icon-[tabler--eye] text-base-content/80 password-active:block hidden size-5 shrink-0"></span>
+                      <span class="icon-[tabler--eye-off] text-base-content/80 password-active:hidden block size-5 shrink-0"></span>
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
@@ -262,13 +272,7 @@ title: Sign Up
                       <template x-if="error">
                         <option disabled class="text-error">Error loading countries</option>
                       </template>
-                      {# <template x-for="country in countries" :key="country.val">
-                        <option :value="country.val" x-text="country.title"></option>
-                      </template> #}
                     </select>
-                    <div x-show="error" class="mt-2 text-sm text-error">
-                      <span x-text="error"></span>
-                    </div>
                   </div>
 
                   <div class="form-control" x-data="citySelect">
@@ -294,13 +298,7 @@ title: Sign Up
                       <template x-if="isLoading">
                         <option disabled>Loading cities...</option>
                       </template>
-                      {# <template x-for="city in cities" :key="city.val">
-                        <option :value="city.val" x-text="city.title"></option>
-                      </template> #}
                     </select>
-                    <div x-show="!hasCountryBeenSelected" class="mt-2 text-sm text-base-content/70">
-                      Please select a country first
-                    </div>
                   </div>
                 </div>
                 <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
@@ -309,7 +307,7 @@ title: Sign Up
                       <span class="label-text">Date of Birth</span>
                     </label>
                     <div class="relative">
-                      <input type="text" id="dob" x-model="formData.dateOfBirth" required 
+                      <input type="text" id="dob" x-model="formData.dateOfBirth"
                         class="input input-bordered w-full focus:input-secondary flatpickr-input" 
                         placeholder="Select your date of birth"
                         x-ref="dob">
@@ -320,59 +318,50 @@ title: Sign Up
                     <label for="phone" class="label">
                       <span class="label-text">Phone Number</span>
                     </label>
-                    <input type="tel" id="phone" x-model="formData.phoneNumber" required
+                    <input type="tel" id="phone" x-model="formData.phoneNumber"
                       class="input input-bordered w-full focus:input-secondary" 
                       placeholder="+1 (555) 000-0000">
                   </div>
                 </div>
+
                 <div class="grid grid-cols-1 gap-6">
                   <div class="form-control">
                     <label for="profile-pic" class="label">
                       <span class="label-text">Profile Picture</span>
                     </label>
-                    <div data-file-upload='{
-                      "url": "/upload",
-                      "extensions": {
-                        "jpg": {
-                          "icon": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><rect x=\"3\" y=\"3\" width=\"18\" height=\"18\" rx=\"2\" ry=\"2\"></rect><circle cx=\"8.5\" cy=\"8.5\" r=\"1.5\"></circle><polyline points=\"21 15 16 10 5 21\"></polyline></svg>",
-                          "class": "shrink-0 size-5"
-                        },
-                        "jpeg": {
-                          "icon": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><rect x=\"3\" y=\"3\" width=\"18\" height=\"18\" rx=\"2\" ry=\"2\"></rect><circle cx=\"8.5\" cy=\"8.5\" r=\"1.5\"></circle><polyline points=\"21 15 16 10 5 21\"></polyline></svg>",
-                          "class": "shrink-0 size-5"
-                        },
-                        "png": {
-                          "icon": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><rect x=\"3\" y=\"3\" width=\"18\" height=\"18\" rx=\"2\" ry=\"2\"></rect><circle cx=\"8.5\" cy=\"8.5\" r=\"1.5\"></circle><polyline points=\"21 15 16 10 5 21\"></polyline></svg>",
-                          "class": "shrink-0 size-5"
-                        }
-                      }
-                    }'>
-                      <div class="bg-base-200/60 rounded-box flex flex-col justify-center border-2 border-base-content/20 border-dashed">
-                        <div class="text-center cursor-pointer p-6" data-file-upload-trigger="">
-                          <p class="text-base-content/50 mb-2 text-sm">Choose a file with a size up to 2MB.</p>
-                          <button class="btn btn-soft btn-sm btn-primary text-nowrap">
-                            <span class="icon-[tabler--file-upload] size-4 shrink-0"></span>
-                            Drag & Drop to Upload
-                          </button>
-                          <p class="text-base-content/50 my-1 text-xs">or</p>
-                          <p class="link link-animated link-primary font-medium text-sm">Browse</p>
-                        </div>
-                        <div class="mx-6 mb-4 space-y-2 empty:m-0" data-file-upload-previews="">
-                          <template data-file-upload-preview>
+                    <div class="file-upload" x-data="fileUpload(formData)">
+                      <input type="file" 
+                        class="hidden" 
+                        accept="image/*"
+                        @change="handleFileSelect"
+                        x-ref="fileInput">
+                      
+                      <button type="button" 
+                        class="relative flex w-full overflow-hidden rounded-lg border border-base-content/20 text-sm focus:z-10 focus:ring-1 focus:border-primary focus:ring-primary focus:outline-none disabled:pointer-events-none disabled:opacity-50"
+                        @click="$refs.fileInput.click()">
+                        <span class="h-full text-nowrap bg-primary text-primary-content rounded-s-lg px-4 py-3">Choose File</span>
+                        <span class="group flex h-full grow overflow-hidden px-4 py-3 text-base-content">
+                          <template x-if="!fileName">
+                            <span>No Chosen File</span>
+                          </template>
+                          <template x-if="fileName">
                             <div class="flex items-center justify-between gap-2">
                               <div class="truncate min-w-0">
-                                <span data-file-upload-file-name class="text-sm font-medium"></span>
+                                <span class="text-sm font-medium" x-text="fileName"></span>
                                 <span class="text-base-content/50">.</span>
-                                <span data-file-upload-file-ext class="text-sm font-medium"></span>
+                                <span class="text-sm font-medium" x-text="fileExt"></span>
                               </div>
-                              <button type="button" class="btn btn-ghost btn-xs shrink-0" data-file-upload-remove>
-                                <span class="icon-[tabler--x] size-4"></span>
-                              </button>
                             </div>
                           </template>
-                        </div>
-                      </div>
+                        </span>
+                      </button>
                     </div>
+                    <template x-if="formData.profilePictureUrl">
+                      <div class="mt-2 text-sm">
+                        <span class="text-base-content/70">File URL:</span>
+                        <a :href="formData.profilePictureUrl" target="_blank" class="link link-accent ml-2 text-primary hover:underline break-all" x-text="formData.profilePictureUrl"></a>
+                      </div>
+                    </template>
                   </div>
                   <div class="form-control">
                     <label class="label">
@@ -380,12 +369,12 @@ title: Sign Up
                     </label>
                     <div class="flex gap-4">
                       <div class="flex items-center gap-1">
-                        <input type="radio" name="gender" id="male" x-model="formData.gender" value="male" required 
+                        <input type="radio" name="gender" id="male" x-model="formData.gender" value="male"
                           class="radio radio-primary">
                         <label for="male" class="label-text text-base">Male</label>
                       </div>
                       <div class="flex items-center gap-1">
-                        <input type="radio" name="gender" id="female" x-model="formData.gender" value="female" required 
+                        <input type="radio" name="gender" id="female" x-model="formData.gender" value="female"
                           class="radio radio-primary">
                         <label for="female" class="label-text text-base">Female</label>
                       </div>
@@ -400,37 +389,37 @@ title: Sign Up
               <div class="space-y-6">
                 <div class="form-control">
                   <label for="linkedin" class="label">
-                    <span class="label-text">LinkedIn Profile</span>
+                    <span class="label-text">LinkedIn Handle</span>
                   </label>
                   <div class="relative">
                     <span class="icon-[tabler--brand-linkedin] absolute left-3 top-1/2 -translate-y-1/2 text-base-content/70"></span>
-                    <input type="url" id="linkedin" x-model="formData.linkedinUrl" 
+                    <input type="text" id="linkedin" x-model="formData.linkedinHandle" 
                       class="input input-bordered w-full pl-10 focus:input-accent" 
-                      placeholder="https://linkedin.com/in/your-profile">
+                      placeholder="your-profile">
                   </div>
                 </div>
 
                 <div class="form-control">
                   <label for="twitter" class="label">
-                    <span class="label-text">Twitter/X Profile</span>
+                    <span class="label-text">Twitter/X Handle</span>
                   </label>
                   <div class="relative">
                     <span class="icon-[tabler--brand-x] absolute left-3 top-1/2 -translate-y-1/2 text-base-content/70"></span>
-                    <input type="url" id="twitter" x-model="formData.twitterUrl" 
+                    <input type="text" id="twitter" x-model="formData.twitterHandle" 
                       class="input input-bordered w-full pl-10 focus:input-accent" 
-                      placeholder="https://twitter.com/your-profile">
+                      placeholder="your-profile">
                   </div>
                 </div>
 
                 <div class="form-control">
                   <label for="github" class="label">
-                    <span class="label-text">GitHub Profile</span>
+                    <span class="label-text">GitHub Handle</span>
                   </label>
                   <div class="relative">
                     <span class="icon-[tabler--brand-github] absolute left-3 top-1/2 -translate-y-1/2 text-base-content/70"></span>
-                    <input type="url" id="github" x-model="formData.githubUrl" 
+                    <input type="text" id="github" x-model="formData.githubHandle" 
                       class="input input-bordered w-full pl-10 focus:input-accent" 
-                      placeholder="https://github.com/your-profile">
+                      placeholder="your-profile">
                   </div>
                 </div>
 
@@ -467,10 +456,22 @@ title: Sign Up
                 <span class="icon-[tabler--arrow-left] w-4 h-4 mr-2"></span>
                 Back
               </button>
-              <button type="button" class="btn btn-secondary btn-soft" @click="nextStep" x-show="currentStep < 4">
-                Next
-                <span class="icon-[tabler--arrow-right] w-4 h-4 ml-2"></span>
-              </button>
+              <template x-if="currentStep < 3">
+                <button type="button" class="btn btn-secondary btn-soft" @click="nextStep">
+                  Next
+                  <span class="icon-[tabler--arrow-right] w-4 h-4 ml-2"></span>
+                </button>
+              </template>
+              <template x-if="currentStep === 3">
+                <button type="submit" class="btn btn-secondary btn-soft" :disabled="isLoading">
+                  <template x-if="!isLoading">
+                    <span>Create Account</span>
+                  </template>
+                  <template x-if="isLoading">
+                    <span class="loading loading-spinner"></span>
+                  </template>
+                </button>
+              </template>
             </div>
           </form>
         </div>

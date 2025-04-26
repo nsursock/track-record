@@ -3,7 +3,8 @@ import '../css/index.css';
 import Alpine from 'alpinejs';
 import { themeChange } from 'theme-change';
 import 'flyonui/flyonui.js';
- 
+import { fileUpload } from './components/file-upload.js';
+
 window.Alpine = Alpine
 
 // Initialize theme controller
@@ -43,6 +44,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Add Alpine extensions here
 document.addEventListener('alpine:init', () => {
+  Alpine.data('fileUpload', fileUpload);
+  
   Alpine.data('signupForm', () => ({
     currentStep: 1,
     formSubmitted: false,
@@ -51,15 +54,16 @@ document.addEventListener('alpine:init', () => {
       password: '',
       firstName: '',
       lastName: '',
-      country: '',
-      city: '',
-      dateOfBirth: '',
-      phoneNumber: '',
-      gender: '',
-      linkedinUrl: '',
-      twitterUrl: '',
-      githubUrl: '',
-      websiteUrl: ''
+      country: null,
+      city: null,
+      dateOfBirth: null,
+      phoneNumber: null,
+      gender: null,
+      linkedinHandle: null,
+      twitterHandle: null,
+      githubHandle: null,
+      websiteUrl: null,
+      profilePictureUrl: null
     },
     passwordStrength: 0,
     passwordRules: {
@@ -71,6 +75,7 @@ document.addEventListener('alpine:init', () => {
     },
     isLoading: false,
     error: null,
+    fileUploadObserver: null,
 
     init() {
       // Initialize any components that need it
@@ -110,13 +115,37 @@ document.addEventListener('alpine:init', () => {
       this.error = null;
 
       try {
-        // Submit form data
+        // Only validate required fields
+        if (!this.formData.email || !this.formData.password || !this.formData.firstName || !this.formData.lastName) {
+          throw new Error('Please fill in all required fields');
+        }
+
+        // Validate password match
+        if (this.formData.password !== this.formData.confirmPassword) {
+          throw new Error('Passwords do not match');
+        }
+
+        // Construct full URLs from handles
+        const submitData = {
+          ...this.formData,
+          // Remove confirmPassword as it's not needed in the API
+          confirmPassword: undefined,
+          // Construct full URLs from handles
+          linkedinUrl: this.formData.linkedinHandle ? `https://linkedin.com/in/${this.formData.linkedinHandle}` : null,
+          twitterUrl: this.formData.twitterHandle ? `https://twitter.com/${this.formData.twitterHandle}` : null,
+          githubUrl: this.formData.githubHandle ? `https://github.com/${this.formData.githubHandle}` : null,
+          // Remove handle fields as they're not needed in the API
+          linkedinHandle: undefined,
+          twitterHandle: undefined,
+          githubHandle: undefined
+        };
+
         const response = await fetch('/api/signup', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify(this.formData)
+          body: JSON.stringify(submitData)
         });
 
         const data = await response.json();
@@ -125,42 +154,9 @@ document.addEventListener('alpine:init', () => {
           throw new Error(data.error || 'Failed to create account');
         }
 
-        // Handle profile picture upload if selected
-        const fileInput = this.$refs.profilePic;
-        if (fileInput && fileInput.files.length > 0) {
-          const file = fileInput.files[0];
-          const reader = new FileReader();
-          
-          reader.onload = async (e) => {
-            try {
-              const uploadResponse = await fetch('/api/upload-profile-picture', {
-                method: 'POST',
-                headers: {
-                  'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                  userId: data.userId,
-                  file: e.target.result
-                })
-              });
-
-              if (!uploadResponse.ok) {
-                throw new Error('Failed to upload profile picture');
-              }
-            } catch (error) {
-              console.error('Error uploading profile picture:', error);
-              // Continue with signup even if profile picture upload fails
-            }
-          };
-
-          reader.readAsDataURL(file);
-        }
-
         this.formSubmitted = true;
         this.currentStep = 4;
-
       } catch (error) {
-        console.error('Error:', error);
         this.error = error.message;
       } finally {
         this.isLoading = false;
@@ -177,6 +173,15 @@ document.addEventListener('alpine:init', () => {
       if (this.currentStep > 1) {
         this.currentStep--;
       }
+    },
+
+    async fileToBase64(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = error => reject(error);
+      });
     }
   }));
 
@@ -423,6 +428,70 @@ document.addEventListener('alpine:init', () => {
           );
         });
       });
+    }
+  }));
+
+  Alpine.data('header', () => ({
+    user: null,
+    notifications: [],
+
+    async init() {
+      try {
+        const session = JSON.parse(localStorage.getItem('session'));
+        if (session) {
+          const response = await fetch('/api/profile', {
+            headers: {
+              'Authorization': `Bearer ${session.access_token}`
+            }
+          });
+
+          if (response.ok) {
+            const data = await response.json();
+            this.user = data.user;
+            await this.fetchNotifications();
+          }
+        }
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    },
+
+    async fetchNotifications() {
+      try {
+        const session = JSON.parse(localStorage.getItem('session'));
+        if (session) {
+          const response = await fetch('/api/notifications', {
+            headers: {
+              'Authorization': `Bearer ${session.access_token}`
+            }
+          });
+
+          if (response.ok) {
+            const data = await response.json();
+            this.notifications = data.notifications;
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching notifications:', error);
+      }
+    },
+
+    async logout() {
+      try {
+        const session = JSON.parse(localStorage.getItem('session'));
+        if (session) {
+          await fetch('/api/logout', {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${session.access_token}`
+            }
+          });
+        }
+        localStorage.removeItem('session');
+        window.location.href = '/login/';
+      } catch (error) {
+        console.error('Logout error:', error);
+      }
     }
   }));
 });

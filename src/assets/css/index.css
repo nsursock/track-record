@@ -14,7 +14,7 @@
 @source "./node_modules/flyonui/dist/index.js";
 @source "./node_modules/flyonui/dist/accordion.js";
 @source "./node_modules/flyonui/dist/select.js";
-
+@source "./node_modules/flyonui/dist/dropdown.js";
 :root {
   --theme-cyberpunk: true;
 }
