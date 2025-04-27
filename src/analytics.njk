@@ -1,0 +1,137 @@
+---
+title: Analytics Dashboard
+layout: base.njk
+---
+
+<div class="container mx-auto py-8 mt-30 px-4 sm:px-6 md:px-8 lg:px-10 bg-base-200 rounded-lg"
+     x-data="charts"
+     x-init="init()"
+     @date-range-changed.window="updateCharts($event)">
+  <div class="flex flex-col sm:flex-row justify-between items-center mb-8">
+    <h1 class="text-2xl sm:text-3xl font-bold mb-4 sm:mb-0">Dashboard</h1>
+    <div class="flex items-center gap-2">
+      <div class="dropdown relative inline-flex" x-data="dateFilter">
+        <button id="date-range-dropdown" type="button" class="dropdown-toggle btn btn-primary btn-soft" aria-haspopup="menu" aria-expanded="false" aria-label="Date Range">
+          <span class="icon-[tabler--calendar] size-5 mr-2"></span>
+          <span x-text="selectedRange"></span>
+          <span class="icon-[tabler--chevron-down] dropdown-open:rotate-180 size-4 ml-2"></span>
+        </button>
+        <ul class="dropdown-menu dropdown-open:opacity-100 hidden min-w-60" role="menu" aria-orientation="vertical" aria-labelledby="date-range-dropdown">
+          <template x-for="range in ranges" :key="range.value">
+            <li>
+              <button @click="selectRange(range)" 
+                 class="dropdown-item" 
+                 :class="{ 'dropdown-active': isActive(range) }" 
+                 x-text="range.label"></button>
+            </li>
+          </template>
+        </ul>
+      </div>
+      <button @click="exportData()" class="btn btn-soft btn-secondary" aria-label="Export to CSV">
+        <span class="icon-[tabler--file-export] size-5 mr-2"></span>
+        Export
+      </button>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div x-show="isLoading" class="flex justify-center items-center py-8">
+    <div class="loading loading-spinner loading-xl"></div>
+  </div>
+
+  <!-- Stats Overview -->
+  <div x-show="!isLoading" class="stats shadow-none mb-8 w-full  stats-vertical sm:stats-horizontal">
+    <div class="stat">
+      <div class="stat-title text-sm sm:text-base" style="color: var(--color-base-content/70)">Views</div>
+      <div class="stat-value text-xl sm:text-2xl" style="color: var(--color-primary)" x-text="data?.stats?.views?.toLocaleString()">-</div>
+      <div class="stat-desc text-xs sm:text-sm">
+        <span class="badge badge-soft" 
+              :style="data?.stats?.viewsChange > 0 ? 'background-color: rgba(34, 197, 94, 0.2); color: #22c55e' : 'background-color: rgba(239, 68, 68, 0.2); color: #ef4444'"
+              x-text="data?.stats?.viewsChange > 0 ? '↗︎ ' + data?.stats?.viewsChange + '%' : '↘︎ ' + Math.abs(data?.stats?.viewsChange) + '%'">-</span>
+      </div>
+    </div>
+
+    <div class="stat">
+      <div class="stat-title text-sm sm:text-base" style="color: var(--color-base-content/70)">Visits</div>
+      <div class="stat-value text-xl sm:text-2xl" style="color: var(--color-primary)" x-text="data?.stats?.visits?.toLocaleString()">-</div>
+      <div class="stat-desc text-xs sm:text-sm">
+        <span class="badge badge-soft" 
+              :style="data?.stats?.visitsChange > 0 ? 'background-color: rgba(34, 197, 94, 0.2); color: #22c55e' : 'background-color: rgba(239, 68, 68, 0.2); color: #ef4444'"
+              x-text="data?.stats?.visitsChange > 0 ? '↗︎ ' + data?.stats?.visitsChange + '%' : '↘︎ ' + Math.abs(data?.stats?.visitsChange) + '%'">-</span>
+      </div>
+    </div>
+
+    <div class="stat">
+      <div class="stat-title text-sm sm:text-base" style="color: var(--color-base-content/70)">Visitors</div>
+      <div class="stat-value text-xl sm:text-2xl" style="color: var(--color-primary)" x-text="data?.stats?.visitors?.toLocaleString()">-</div>
+      <div class="stat-desc text-xs sm:text-sm">
+        <span class="badge badge-soft" 
+              :style="data?.stats?.visitorsChange > 0 ? 'background-color: rgba(34, 197, 94, 0.2); color: #22c55e' : 'background-color: rgba(239, 68, 68, 0.2); color: #ef4444'"
+              x-text="data?.stats?.visitorsChange > 0 ? '↗︎ ' + data?.stats?.visitorsChange + '%' : '↘︎ ' + Math.abs(data?.stats?.visitorsChange) + '%'">-</span>
+      </div>
+    </div>
+
+    <div class="stat">
+      <div class="stat-title text-sm sm:text-base" style="color: var(--color-base-content/70)">Bounce Rate</div>
+      <div class="stat-value text-xl sm:text-2xl" style="color: var(--color-primary)" x-text="data?.stats?.bounceRate + '%'">-</div>
+      <div class="stat-desc text-xs sm:text-sm">
+        <span class="badge badge-soft" 
+              :style="data?.stats?.bounceRateChange > 0 ? 'background-color: rgba(239, 68, 68, 0.2); color: #ef4444' : 'background-color: rgba(34, 197, 94, 0.2); color: #22c55e'"
+              x-text="data?.stats?.bounceRateChange > 0 ? '↗︎ ' + data?.stats?.bounceRateChange + '%' : '↘︎ ' + Math.abs(data?.stats?.bounceRateChange) + '%'">-</span>
+      </div>
+    </div>
+
+    <div class="stat">
+      <div class="stat-title text-sm sm:text-base" style="color: var(--color-base-content/70)">Visit Duration</div>
+      <div class="stat-value text-xl sm:text-2xl" style="color: var(--color-primary)" x-text="data?.stats?.visitDuration">-</div>
+      <div class="stat-desc text-xs sm:text-sm">
+        <span class="badge badge-soft" 
+              :style="data?.stats?.visitDurationChange > 0 ? 'background-color: rgba(34, 197, 94, 0.2); color: #22c55e' : 'background-color: rgba(239, 68, 68, 0.2); color: #ef4444'"
+              x-text="data?.stats?.visitDurationChange > 0 ? '↗︎ ' + data?.stats?.visitDurationChange + '%' : '↘︎ ' + Math.abs(data?.stats?.visitDurationChange) + '%'">-</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Charts Section -->
+  <div x-show="!isLoading" class="grid grid-cols-1 gap-4 sm:gap-6">
+    <!-- Views and Visitors Over Time -->
+    <div class="bg-base-100 p-4 sm:p-6 rounded-lg shadow">
+      <h3 class="text-lg font-semibold mb-4">Views and Visitors Over Time</h3>
+      <div id="views-chart" class="w-full"></div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
+      <!-- Top Pages -->
+      <div class="bg-base-100 p-4 sm:p-6 rounded-lg shadow">
+        <h3 class="text-lg font-semibold mb-4">Top Pages</h3>
+        <div id="pages-chart" class="w-full"></div>
+      </div>
+
+      <!-- Top Referrers -->
+      <div class="bg-base-100 p-4 sm:p-6 rounded-lg shadow">
+        <h3 class="text-lg font-semibold mb-4">Top Sources</h3>
+        <div id="referrers-chart" class="w-full"></div>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+      <!-- Browsers -->
+      <div class="bg-base-100 p-4 sm:p-6 rounded-lg shadow">
+        <h3 class="text-lg font-semibold mb-4">Browsers</h3>
+        <div id="browsers-chart" class="w-full"></div>
+      </div>
+
+      <!-- Operating Systems -->
+      <div class="bg-base-100 p-4 sm:p-6 rounded-lg shadow">
+        <h3 class="text-lg font-semibold mb-4">Operating Systems</h3>
+        <div id="os-chart" class="w-full"></div>
+      </div>
+
+      <!-- Devices -->
+      <div class="bg-base-100 p-4 sm:p-6 rounded-lg shadow">
+        <h3 class="text-lg font-semibold mb-4">Devices</h3>
+        <div id="devices-chart" class="w-full"></div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -2,8 +2,12 @@ import '../css/index.css';
 
 import Alpine from 'alpinejs';
 import { themeChange } from 'theme-change';
+import flatpickr from 'flatpickr';
+import 'flatpickr/dist/flatpickr.css';
 import 'flyonui/flyonui.js';
 import { fileUpload } from './components/file-upload.js';
+import charts from './components/charts.js';
+import dateFilter from './components/date-filter.js';
 
 window.Alpine = Alpine
 
@@ -45,6 +49,8 @@ document.addEventListener('DOMContentLoaded', () => {
 // Add Alpine extensions here
 document.addEventListener('alpine:init', () => {
   Alpine.data('fileUpload', fileUpload);
+  Alpine.data('charts', charts);
+  Alpine.data('dateFilter', dateFilter);
   
   Alpine.data('signupForm', () => ({
     currentStep: 1,

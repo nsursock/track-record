@@ -8,6 +8,8 @@ export default defineConfig({
       external: [
         'alpinejs',
         'flatpickr',
+        'theme-change',
+        'flyonui'
       ]
     }
   },
@@ -21,6 +23,11 @@ export default defineConfig({
     devSourcemap: true
   },
   optimizeDeps: {
-    include: ['flatpickr']
+    include: [
+      'alpinejs',
+      'flatpickr',
+      'theme-change',
+      'flyonui'
+    ]
   }
 }); 

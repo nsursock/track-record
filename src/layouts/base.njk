@@ -1,13 +1,14 @@
 <!DOCTYPE html>
 <html lang="{{ meta.lang or site.lang }}">
   <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>{{ site.title }} - {{ title or meta.title }}</title>
     {% include "meta.njk" %}
-    <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="{{ '/node_modules/flatpickr/dist/flatpickr.min.css' | url }}" />
-    <link rel="stylesheet" href="{{ '/assets/css/index.css' | url }}" />
+    <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+    <link rel="stylesheet" href="{{ '/node_modules/flatpickr/dist/flatpickr.min.css' | url }}"/>
+    <link rel="stylesheet" href="{{ '/node_modules/apexcharts/dist/apexcharts.css' | url }}"/>
+    <link rel="stylesheet" href="{{ '/assets/css/index.css' | url }}"/>
   </head>
 
   <body>
@@ -15,18 +16,21 @@
     {% include "header.njk" %}
 
     <main id="main" class="px-4 sm:px-6 md:px-8">
-      
-        {{ content | safe }}
+
+      {{ content | safe }}
 
     </main>
 
     {% include "footer.njk" %}
 
-    <script type="module">
+    {# <script type="module">
       import Alpine from 'alpinejs';
       import flatpickr from 'flatpickr';
       import 'flatpickr/dist/flatpickr.css';
-    </script>
+    </script> #}
     <script type="module" src="{{ '/assets/js/index.js' | url }}"></script>
+    <script src="{{ '/node_modules/lodash/lodash.js' | url }}"></script>
+    <script src="{{ '/node_modules/apexcharts/dist/apexcharts.js' | url }}"></script>
+    <script src="{{ '/node_modules/flyonui/dist/helper-apexcharts.js' | url }}"></script>
   </body>
 </html>
