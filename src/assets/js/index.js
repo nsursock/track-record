@@ -5,6 +5,7 @@ import { themeChange } from 'theme-change';
 import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.css';
 import 'flyonui/flyonui.js';
+import ApexCharts from 'apexcharts';
 import { fileUpload } from './components/file-upload.js';
 import charts from './components/charts.js';
 import dateFilter from './components/date-filter.js';
@@ -16,6 +17,16 @@ themeChange()
 
 // Set default theme to cyberpunk
 document.documentElement.setAttribute('data-theme', 'cyberpunk');
+
+// Initialize ApexCharts
+window.ApexCharts = ApexCharts;
+
+// Define buildChart function globally
+window.buildChart = (selector, options) => {
+  const chart = new ApexCharts(document.querySelector(selector), options('light'));
+  chart.render();
+  return chart;
+};
 
 // Initialize FlyonUI components after DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {

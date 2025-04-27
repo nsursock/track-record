@@ -23,14 +23,7 @@
 
     {% include "footer.njk" %}
 
-    {# <script type="module">
-      import Alpine from 'alpinejs';
-      import flatpickr from 'flatpickr';
-      import 'flatpickr/dist/flatpickr.css';
-    </script> #}
     <script type="module" src="{{ '/assets/js/index.js' | url }}"></script>
-    <script src="{{ '/node_modules/lodash/lodash.js' | url }}"></script>
-    <script src="{{ '/node_modules/apexcharts/dist/apexcharts.js' | url }}"></script>
-    <script src="{{ '/node_modules/flyonui/dist/helper-apexcharts.js' | url }}"></script>
+    <script type="module" src="{{ '/node_modules/lodash/lodash.js' | url }}"></script>
   </body>
 </html>
