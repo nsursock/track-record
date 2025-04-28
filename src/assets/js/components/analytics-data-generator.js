@@ -114,18 +114,21 @@ export const generatePageviews = () => {
   const pageviews = [];
   const now = new Date();
   const startDate = new Date(now);
-  startDate.setHours(startDate.getHours() - 24); // Last 24 hours
+  startDate.setMonth(startDate.getMonth() - 1); // Go back 1 month
+  startDate.setHours(0, 0, 0, 0);
 
-  // Generate visitors for each hour
-  for (let hour = 0; hour < 24; hour++) {
-    const hourStart = new Date(startDate);
-    hourStart.setHours(hourStart.getHours() + hour);
+  // Generate visitors for each day
+  const daysDiff = Math.ceil((now - startDate) / (1000 * 60 * 60 * 24));
+  
+  for (let day = 0; day < daysDiff; day++) {
+    const dayStart = new Date(startDate);
+    dayStart.setDate(dayStart.getDate() + day);
     
-    // Generate random number of visitors for this hour (between 8 and 20)
-    const hourVisitors = Math.floor(8 + Math.random() * 12);
+    // Generate random number of visitors for this day (between 5 and 30)
+    const dayVisitors = Math.floor(5 + Math.random() * 25);
     
-    // Generate all visitors for this hour
-    for (let visitorIndex = 0; visitorIndex < hourVisitors; visitorIndex++) {
+    // Generate all visitors for this day
+    for (let visitorIndex = 0; visitorIndex < dayVisitors; visitorIndex++) {
       // Generate visitor data
       const ip = generateIP();
       const country = randomItem(countries);
@@ -146,7 +149,10 @@ export const generatePageviews = () => {
       }
       
       // Generate timestamps and durations for each pageview
-      let lastTimestamp = new Date(hourStart);
+      let lastTimestamp = new Date(dayStart);
+      lastTimestamp.setHours(Math.floor(Math.random() * 24));
+      lastTimestamp.setMinutes(Math.floor(Math.random() * 60));
+      
       for (let i = 0; i < visitorPages.length; i++) {
         const page = visitorPages[i];
         const timestamp = generateTimestamp(lastTimestamp);
@@ -244,16 +250,23 @@ export const computeAnalytics = (pageviews) => {
   // Compute other statistics
   const uniqueVisitors = new Set(pageviews.map(p => p.ip)).size;
   const totalViews = pageviews.length;
-  const bounceRate = (pageviews.filter(p => p.currentPage === '/').length / totalViews) * 100;
+  
+  // Handle division by zero cases
+  const bounceRate = totalViews > 0 ? (pageviews.filter(p => p.currentPage === '/').length / totalViews) * 100 : 0;
+  const avgVisitDuration = totalViews > 0 ? Math.round(pageviews.reduce((sum, p) => sum + (p.duration || 0), 0) / totalViews / 60) : 0;
 
   return {
     stats: {
       views: totalViews,
+      visits: totalViews,
       visitors: uniqueVisitors,
       bounceRate: Math.round(bounceRate),
-      viewsChange: Math.floor(Math.random() * 20) - 5,
-      visitorsChange: Math.floor(Math.random() * 20) - 5,
-      bounceRateChange: Math.floor(Math.random() * 20) - 10
+      visitDuration: `${avgVisitDuration}m`,
+      viewsChange: 0,
+      visitsChange: 0,
+      visitorsChange: 0,
+      bounceRateChange: 0,
+      visitDurationChange: 0
     },
     viewsOverTime: {
       dates: sortedHours.map(([_, stats]) => stats.timestamp.toISOString()),

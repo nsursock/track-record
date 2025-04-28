@@ -13,7 +13,7 @@ export default function () {
       { label: 'Last 6 months', value: 'last6Months' },
       { label: 'Last 12 months', value: 'last12Months' },
       { label: 'All time', value: 'allTime' },
-      { label: 'Custom range', value: 'custom' }
+      // { label: 'Custom range', value: 'custom' }
     ],
 
     selectRange(range) {

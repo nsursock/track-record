@@ -29,23 +29,23 @@ const filterPageviewsByRange = (pageviews, range) => {
       startDate.setDate(startDate.getDate() - 1);
       break;
     case 'thisWeek':
-      startDate.setDate(startDate.getDate() - startDate.getDay());
+      // Set to start of current week (Monday)
+      const day = startDate.getDay();
+      const diff = startDate.getDate() - day + (day === 0 ? -6 : 1); // Adjust when day is Sunday
+      startDate.setDate(diff);
       startDate.setHours(0, 0, 0, 0);
       break;
     case 'last7':
-      startDate.setDate(startDate.getDate() - 7);
+      startDate.setDate(startDate.getDate() - 6);
       startDate.setHours(0, 0, 0, 0);
       break;
     case 'thisMonth':
-      startDate.setDate(1);
-      startDate.setHours(0, 0, 0, 0);
-      break;
     case 'last30':
-      startDate.setDate(startDate.getDate() - 30);
+      startDate.setDate(startDate.getDate() - 29);
       startDate.setHours(0, 0, 0, 0);
       break;
     case 'last90':
-      startDate.setDate(startDate.getDate() - 90);
+      startDate.setDate(startDate.getDate() - 89);
       startDate.setHours(0, 0, 0, 0);
       break;
     case 'thisYear':
@@ -53,11 +53,13 @@ const filterPageviewsByRange = (pageviews, range) => {
       startDate.setHours(0, 0, 0, 0);
       break;
     case 'last6Months':
-      startDate.setMonth(startDate.getMonth() - 6);
+      startDate.setMonth(startDate.getMonth() - 5);
+      startDate.setDate(1);
       startDate.setHours(0, 0, 0, 0);
       break;
     case 'last12Months':
-      startDate.setMonth(startDate.getMonth() - 12);
+      startDate.setMonth(startDate.getMonth() - 11);
+      startDate.setDate(1);
       startDate.setHours(0, 0, 0, 0);
       break;
     case 'allTime':
@@ -65,7 +67,7 @@ const filterPageviewsByRange = (pageviews, range) => {
       startDate.setHours(0, 0, 0, 0);
       break;
     default:
-      startDate.setDate(startDate.getDate() - 7);
+      startDate.setDate(startDate.getDate() - 6);
       startDate.setHours(0, 0, 0, 0);
   }
   
@@ -80,7 +82,16 @@ let cachedData = null;
 let lastGeneratedRange = null;
 
 // Function to compute statistics from pageviews
-const computeStats = (pageviews) => {
+const computeStats = (pageviews, range, allPageviews) => {
+  // Initialize all stats maps at the beginning
+  const pageStats = new Map();
+  const referrerStats = new Map();
+  const browserStats = new Map();
+  const osStats = new Map();
+  const deviceStats = new Map();
+  const referrerCategoryStats = new Map();
+  const referrerSubcategoryStats = new Map();
+
   // Group pageviews by visitor (using visitorId)
   const visitors = new Map();
   pageviews.forEach(pageview => {
@@ -95,14 +106,87 @@ const computeStats = (pageviews) => {
   const bounces = Array.from(visitors.values()).filter(visitorPages => 
     visitorPages.length === 1 && visitorPages[0].isBounce
   ).length;
-  const bounceRate = (bounces / visitors.size) * 100;
+  const bounceRate = visitors.size > 0 ? (bounces / visitors.size) * 100 : 0;
 
   // Compute average visit duration
   const totalDuration = pageviews.reduce((sum, pv) => sum + pv.duration, 0);
-  const avgDuration = Math.floor(totalDuration / pageviews.length);
+  const avgDuration = pageviews.length > 0 ? Math.floor(totalDuration / pageviews.length) : 0;
+
+  // Calculate previous period metrics for comparison
+  let viewsChange = 0;
+  let visitorsChange = 0;
+  let bounceRateChange = 0;
+  let visitDurationChange = 0;
+
+  // Skip comparison for 'allTime' and when we don't have enough data
+  if (range !== 'allTime' && allPageviews && allPageviews.length > 0) {
+    const now = new Date();
+    const previousStartDate = new Date();
+    
+    // Set the previous period start date based on the current range
+    switch (range) {
+      case 'today':
+        previousStartDate.setDate(previousStartDate.getDate() - 1);
+        previousStartDate.setHours(0, 0, 0, 0);
+        break;
+      case 'last24':
+        previousStartDate.setDate(previousStartDate.getDate() - 2);
+        break;
+      case 'thisWeek':
+        previousStartDate.setDate(previousStartDate.getDate() - 7);
+        previousStartDate.setHours(0, 0, 0, 0);
+        break;
+      case 'last7':
+        previousStartDate.setDate(previousStartDate.getDate() - 7);
+        previousStartDate.setHours(0, 0, 0, 0);
+        break;
+      case 'thisMonth':
+      case 'last30':
+        previousStartDate.setDate(previousStartDate.getDate() - 30);
+        previousStartDate.setHours(0, 0, 0, 0);
+        break;
+      case 'last90':
+        previousStartDate.setDate(previousStartDate.getDate() - 90);
+        previousStartDate.setHours(0, 0, 0, 0);
+        break;
+      case 'thisYear':
+        previousStartDate.setFullYear(now.getFullYear() - 1, 0, 1);
+        previousStartDate.setHours(0, 0, 0, 0);
+        break;
+      default:
+        previousStartDate.setDate(previousStartDate.getDate() - 7);
+        previousStartDate.setHours(0, 0, 0, 0);
+    }
+
+    // Filter pageviews for previous period from the full dataset
+    const previousPageviews = allPageviews.filter(pv => {
+      const pvDate = new Date(pv.timestamp);
+      return pvDate >= previousStartDate && pvDate < now;
+    });
+
+    if (previousPageviews.length > 0) {
+      // Compute previous period metrics
+      const previousVisitors = new Set(previousPageviews.map(pv => pv.visitorId)).size;
+      const previousViews = previousPageviews.length;
+      const previousBounces = previousPageviews.filter(pv => pv.isBounce).length;
+      const previousBounceRate = previousVisitors > 0 ? (previousBounces / previousVisitors) * 100 : 0;
+      const previousTotalDuration = previousPageviews.reduce((sum, pv) => sum + pv.duration, 0);
+      const previousAvgDuration = previousPageviews.length > 0 ? Math.floor(previousTotalDuration / previousPageviews.length) : 0;
+
+      // Calculate percentage changes
+      const calculateChange = (current, previous) => {
+        if (previous === 0) return 0;
+        return Math.round(((current - previous) / previous) * 100);
+      };
+
+      viewsChange = calculateChange(pageviews.length, previousViews);
+      visitorsChange = calculateChange(visitors.size, previousVisitors);
+      bounceRateChange = calculateChange(bounceRate, previousBounceRate);
+      visitDurationChange = calculateChange(avgDuration, previousAvgDuration);
+    }
+  }
 
   // Group pageviews by page
-  const pageStats = new Map();
   pageviews.forEach(pageview => {
     const page = pageview.currentPage || '/';
     if (!pageStats.has(page)) {
@@ -112,7 +196,6 @@ const computeStats = (pageviews) => {
   });
 
   // Group pageviews by referrer
-  const referrerStats = new Map();
   pageviews.forEach(pageview => {
     let source = 'direct';
     if (pageview.referrer) {
@@ -135,7 +218,6 @@ const computeStats = (pageviews) => {
   });
 
   // Group pageviews by browser
-  const browserStats = new Map();
   pageviews.forEach(pageview => {
     const browser = pageview.browser.name;
     if (!browserStats.has(browser)) {
@@ -145,7 +227,6 @@ const computeStats = (pageviews) => {
   });
 
   // Group pageviews by OS
-  const osStats = new Map();
   pageviews.forEach(pageview => {
     const os = pageview.os.name;
     if (!osStats.has(os)) {
@@ -155,7 +236,6 @@ const computeStats = (pageviews) => {
   });
 
   // Group pageviews by device
-  const deviceStats = new Map();
   pageviews.forEach(pageview => {
     const device = pageview.device.type;
     if (!deviceStats.has(device)) {
@@ -165,7 +245,6 @@ const computeStats = (pageviews) => {
   });
 
   // Group pageviews by referrer category
-  const referrerCategoryStats = new Map();
   pageviews.forEach(pageview => {
     const category = pageview.referrer?.category || 'direct';
     if (!referrerCategoryStats.has(category)) {
@@ -175,7 +254,6 @@ const computeStats = (pageviews) => {
   });
 
   // Group pageviews by referrer subcategory
-  const referrerSubcategoryStats = new Map();
   pageviews.forEach(pageview => {
     const subcategory = pageview.referrer?.subcategory || 'direct';
     if (!referrerSubcategoryStats.has(subcategory)) {
@@ -258,11 +336,11 @@ const computeStats = (pageviews) => {
       visitors: visitors.size,
       bounceRate: Math.round(bounceRate),
       visitDuration: formatDuration(avgDuration),
-      viewsChange: Math.floor(Math.random() * 20) - 5,
-      visitsChange: Math.floor(Math.random() * 20) - 5,
-      visitorsChange: Math.floor(Math.random() * 20) - 5,
-      bounceRateChange: Math.floor(Math.random() * 20) - 10,
-      visitDurationChange: Math.floor(Math.random() * 20) - 10
+      viewsChange,
+      visitsChange: visitorsChange,
+      visitorsChange,
+      bounceRateChange,
+      visitDurationChange
     },
     viewsOverTime: {
       dates: sortedHours.map(([_, stats]) => stats.timestamp.toISOString()),
@@ -299,8 +377,8 @@ export const getAnalyticsData = async (range = 'last7') => {
   // Filter the cached data based on the selected range
   const filteredPageviews = filterPageviewsByRange(cachedData.pageviews, range);
   
-  // Compute statistics from filtered pageviews
-  const stats = computeStats(filteredPageviews);
+  // Compute statistics from filtered pageviews, passing the full dataset for comparison
+  const stats = computeStats(filteredPageviews, range, cachedData.pageviews);
   
   // Return both the statistics and the filtered pageviews
   return {

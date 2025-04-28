@@ -1,0 +1,82 @@
+---
+layout: base
+eleventyNavigation:
+  key: Articles
+  order: 3
+pagination:
+  data: collections.posts
+  size: 12
+  alias: posts
+meta:
+  title: Posts archive
+  description: this is where you can find all our posts.
+---
+
+<section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 bg-base-100 text-base-content">
+  <h1 class="text-4xl font-bold text-center mb-12 text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary">All Articles</h1>
+  
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+    {% for post in posts %}
+      <article class="card bg-base-200 border border-primary/20 shadow-none hover:shadow-[0_0_15px_rgba(var(--primary),0.3)] transition-all duration-300 hover:-translate-y-1">
+        {% if post.data.hero_image %}
+          <div class="relative h-48 overflow-hidden">
+            {% image "src/assets/images/posts/" + post.data.hero_image + ".png", post.data.title, "(min-width: 768px) 50vw, 100vw", "w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" %}
+          </div>
+        {% endif %}
+        <div class="card-body">
+          <div class="flex items-center text-sm text-base-content/70 mb-3">
+            <time datetime="{{ post.date | date('YYYY-MM-DD') }}" class="flex items-center">
+              <span class="icon-[tabler--calendar] mr-1 size-4 text-primary"></span>
+              {{ post.date | date('MMM D, YYYY') }}
+            </time>
+            {% if post.data.author %}
+              <span class="mx-2 text-primary">·</span>
+              <span class="flex items-center">
+                <span class="icon-[tabler--user] mr-1 size-4 text-primary"></span>
+                {{ post.data.author.name }}
+              </span>
+            {% endif %}
+          </div>
+          <h2 class="card-title mb-3 group">
+            <a href="{{post.url}}" class="text-base-content hover:text-primary transition-colors duration-200">
+              {{ post.data.title }}
+            </a>
+          </h2>
+          {% if post.data.description %}
+            <p class="text-base-content/70 text-sm mb-4">{{ post.data.description }}</p>
+          {% endif %}
+          {% if post.data.tags %}
+            <div class="card-actions flex flex-wrap gap-2">
+              {% for tag in post.data.tags %}
+                <span class="badge bg-primary/10 text-primary border border-primary/20 hover:bg-primary/20 transition-colors duration-200">
+                  {{ tag }}
+                </span>
+              {% endfor %}
+            </div>
+          {% endif %}
+          <div class="mt-4">
+            <a href="{{post.url}}" class="inline-flex items-center text-primary hover:text-primary-focus transition-colors duration-200">
+              Read More
+              <span class="icon-[tabler--arrow-right] ml-1 size-4 transition-transform duration-200 group-hover:translate-x-1"></span>
+            </a>
+          </div>
+        </div>
+      </article>
+    {% endfor %}
+  </div>
+
+  <div class="flex justify-center gap-4 py-8">
+    {% if pagination.href.previous %}
+      <a href="{{pagination.href.previous}}" class="inline-flex items-center px-4 py-2 bg-base-200 border border-primary/20 text-primary hover:bg-primary/10 transition-colors duration-200 rounded-md">
+        <span class="icon-[tabler--arrow-left] mr-1 size-4"></span>
+        Previous Page
+      </a>
+    {% endif %}
+    {% if pagination.href.next %}
+      <a href="{{pagination.href.next}}" class="inline-flex items-center px-4 py-2 bg-base-200 border border-primary/20 text-primary hover:bg-primary/10 transition-colors duration-200 rounded-md">
+        Next Page
+        <span class="icon-[tabler--arrow-right] ml-1 size-4"></span>
+      </a>
+    {% endif %}
+  </div>
+</section>
